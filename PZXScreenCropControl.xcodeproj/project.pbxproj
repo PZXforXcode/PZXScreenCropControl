@@ -13,6 +13,7 @@
 		7096F2411DD1734F0049B8BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7096F23F1DD1734F0049B8BB /* Main.storyboard */; };
 		7096F2431DD1734F0049B8BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7096F2421DD1734F0049B8BB /* Assets.xcassets */; };
 		7096F2461DD1734F0049B8BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7096F2441DD1734F0049B8BB /* LaunchScreen.storyboard */; };
+		70AE8C571DD4723B00A5473F /* PZXScreenCropController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70AE8C561DD4723B00A5473F /* PZXScreenCropController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		7096F2421DD1734F0049B8BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7096F2451DD1734F0049B8BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7096F2471DD1734F0049B8BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		70AE8C551DD4723B00A5473F /* PZXScreenCropController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PZXScreenCropController.h; sourceTree = "<group>"; };
+		70AE8C561DD4723B00A5473F /* PZXScreenCropController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PZXScreenCropController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,7 @@
 		7096F2351DD1734F0049B8BB /* PZXScreenCropControl */ = {
 			isa = PBXGroup;
 			children = (
+				70AE8C541DD4723B00A5473F /* PZXScreenCropController */,
 				7096F2391DD1734F0049B8BB /* AppDelegate.h */,
 				7096F23A1DD1734F0049B8BB /* AppDelegate.m */,
 				7096F23C1DD1734F0049B8BB /* ViewController.h */,
@@ -77,6 +81,15 @@
 				7096F2371DD1734F0049B8BB /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		70AE8C541DD4723B00A5473F /* PZXScreenCropController */ = {
+			isa = PBXGroup;
+			children = (
+				70AE8C551DD4723B00A5473F /* PZXScreenCropController.h */,
+				70AE8C561DD4723B00A5473F /* PZXScreenCropController.m */,
+			);
+			path = PZXScreenCropController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +166,7 @@
 			files = (
 				7096F23E1DD1734F0049B8BB /* ViewController.m in Sources */,
 				7096F23B1DD1734F0049B8BB /* AppDelegate.m in Sources */,
+				70AE8C571DD4723B00A5473F /* PZXScreenCropController.m in Sources */,
 				7096F2381DD1734F0049B8BB /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,6 +326,7 @@
 				7096F24C1DD1734F0049B8BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
