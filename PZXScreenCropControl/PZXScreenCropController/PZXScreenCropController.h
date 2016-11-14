@@ -26,6 +26,8 @@
 
 @property(nonatomic,assign) CGFloat widthAndHeight; //截取比例，宽高比
 
+@property(nonatomic,assign)BOOL isRound; //是否是圆形截图 默认是NO
+
 - (void)appearWithAnimation:(BOOL)animation;//出现方法
 
 

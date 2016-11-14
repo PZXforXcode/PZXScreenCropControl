@@ -85,11 +85,11 @@
         
         PZXScreenCropController *vc = [[PZXScreenCropController alloc]init];
         vc.originalImage = image;
-        vc.widthAndHeight = 1000.f/600.f;
+        vc.isRound = YES;
+        vc.widthAndHeight = 800/600.f;
         vc.delegate = self;
         [vc appearWithAnimation:YES];
-//        [picker pushViewController:vc animated:YES];
-//            [picker presentViewController:vc animated:YES completion:nil];
+
 
     }
 

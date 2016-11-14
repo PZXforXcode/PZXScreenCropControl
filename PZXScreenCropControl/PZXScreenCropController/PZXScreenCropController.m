@@ -16,13 +16,61 @@
 @interface UIImage (PZXImageCrop_Addition)
 
 -(UIImage *)PZXCropImageWithRect:(CGRect )rect;//切割图片rect方法
+
 -(UIImage *)PZXFixOrientation;//修正图片方向方法，百度的，不用这个方法图片也许被切割后会方向错乱
+
+-(UIImage *)PZXCropRoundImageWithRect:(CGRect )rect;//切割图片rect方法
 
 
 @end
 
 @implementation UIImage (PZXImageCrop_Addition)
+-(UIImage *)PZXCropRoundImageWithRect:(CGRect)rect{
+    
+    //rect要乘以图片放大scale的倍数，不然放大了只能截取滴滴嘎嘎
 
+    rect.origin.x = 0;
+    rect.origin.y = 0;
+    rect.size.width *= self.scale;
+    rect.size.height *= self.scale;
+    //x,y不能小0
+    if (rect.origin.x < 0) {
+        
+        rect.origin.x = 0;
+        
+    }
+    if (rect.origin.y < 0) {
+        
+        rect.origin.y = 0;
+        
+    }
+    //如果rect的宽高超过了image本身的宽高会接到空白的东西，要给他删去。
+    CGFloat cgWidth = CGImageGetWidth(self.CGImage);
+    CGFloat cgHeight = CGImageGetHeight(self.CGImage);//取到图片的宽高
+    
+    if (CGRectGetMaxX(rect)>cgWidth) {
+        
+        rect.size.width = cgWidth-rect.origin.x;
+    }
+    if (CGRectGetMaxY(rect)>cgHeight) {
+        
+        rect.size.height = cgHeight-rect.origin.y;
+    }
+    
+    //开位图上下文
+    UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
+    //创建圆形路径
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:rect];
+    //设置为裁剪区域
+    [path addClip];
+    //绘制图片
+    [self drawAtPoint:CGPointZero];
+    UIImage *resultImage= UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return resultImage;
+
+
+}
 -(UIImage *)PZXCropImageWithRect:(CGRect)rect{
     
     //rect要乘以图片放大scale的倍数，不然放大了只能截取滴滴嘎嘎
@@ -56,14 +104,14 @@
     
     //网上的截图3部曲
     CGImageRef imageRef = CGImageCreateWithImageInRect(self.CGImage, rect);//截取图片和rect
-    
+
     UIImage *resultImage=[UIImage imageWithCGImage:imageRef];//截取后的image
 
     CGImageRelease(imageRef);
 
     //修正回原scale和方向
     resultImage = [UIImage imageWithCGImage:resultImage.CGImage scale:self.scale orientation:self.imageOrientation];
-    
+
     return resultImage;
 }
 
@@ -138,7 +186,8 @@
 @property(nonatomic,strong) UIView *buttonBackgroundView;
 @property(nonatomic,strong) UIButton *cancelButton;
 @property(nonatomic,strong) UIButton *confirmButton;
-
+@property(nonatomic,strong) CAShapeLayer *overLayer;
+@property(nonatomic,strong) CAShapeLayer *line;
 
 
 @end
@@ -171,7 +220,7 @@
     
     //设置frame,这里需要设置下，这样其会在最下层
     self.scrollView.frame = self.view.bounds;
-    self.overlayView.layer.borderColor = [UIColor colorWithWhite:0.966 alpha:1.000].CGColor;
+//    self.overlayView.layer.borderColor = [UIColor colorWithWhite:0.966 alpha:1.000].CGColor;
     
     //绘制上下两块灰色区域
     self.topBlackView = [self quicklyCreatView];
@@ -209,8 +258,8 @@
 {
     UIView *view = [[UIView alloc]init];
     view.userInteractionEnabled = NO;
-    view.backgroundColor = [UIColor blackColor];
-    view.layer.opacity = 0.25f;
+    view.backgroundColor =  [UIColor colorWithWhite:0.25 alpha:0.25];
+//    view.layer.opacity = 0.25f;
     return view;
 }
 
@@ -291,6 +340,11 @@
 
     UIImage *cropImage = [self.imageView.image PZXCropImageWithRect:cropRect];//计算出后通过image的方法截图。
     
+    if (_isRound == YES) {//如果是圆形则在将图片剪切成圆形
+        
+        cropImage =  [cropImage PZXCropRoundImageWithRect:CGRectMake(0, 0, cropImage.size.width, cropImage.size.height)];
+    }
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(photoCropFinishWithCropImage:OriginalImage:)]){
         [self.delegate photoCropFinishWithCropImage:cropImage OriginalImage:self.originalImage];
     }
@@ -342,8 +396,8 @@
 {
     if (!_overlayView) {
         _overlayView = [[UIView alloc]init];
-        _overlayView.layer.borderColor = [UIColor whiteColor].CGColor;
-        _overlayView.layer.borderWidth = 1.0f;
+//        _overlayView.layer.borderColor = [UIColor whiteColor].CGColor;
+//        _overlayView.layer.borderWidth = 1.0f;
         _overlayView.userInteractionEnabled = NO;
         [self.view addSubview:_overlayView];
     }
@@ -384,6 +438,7 @@
 
 - (void)viewDidLayoutSubviews{
     [super viewDidLayoutSubviews];
+    //构建界面写在这个生命周期的原因，每次旋转屏幕也会走一次。达到适配转屏。
     [self initializeUserInterface];//构建界面
 
     
@@ -419,6 +474,17 @@
     self.overlayView.frame = CGRectMake(0, 0, width, height);
     self.overlayView.center = CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2);
     
+    if (_isRound == YES) {//如果是圆形则显示圆形的截图框（用layer的path画出）
+        
+        [self RoundCrop];
+
+        
+    }else{
+        _overlayView.layer.borderColor = [UIColor whiteColor].CGColor;
+        _overlayView.layer.borderWidth = 1.0f;
+    
+    }
+
     //上下黑色覆盖View
     if (isBaseOnWidth) {
         //上和下
@@ -501,6 +567,44 @@
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     return self.imageView;
+}
+#pragma roundCropFunc
+-(void)RoundCrop{
+    
+    //一开始要删除一次，不然每次旋转屏幕会多添加一个layer。而且一开始也会颜色深一点
+    [self.overLayer removeFromSuperlayer];
+    
+    self.overlayView.backgroundColor = [UIColor clearColor];
+    //layer
+    //创建正方形path
+    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, self.overlayView.frame.size.width, self.overlayView.frame.size.height) cornerRadius:0];
+    //里面圆的path
+    UIBezierPath *circlePath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, self.overlayView.frame.size.width, self.overlayView.frame.size.height)];
+    //把圆形paht加入path
+    [path appendPath:circlePath];
+    //path用rule
+    [path setUsesEvenOddFillRule:YES];
+    
+    //镂空layer
+    _overLayer = [CAShapeLayer layer];
+    _overLayer.fillColor = [UIColor colorWithWhite:0.25 alpha:0.25].CGColor;
+    _overLayer.fillRule = kCAFillRuleEvenOdd;
+    _overLayer.frame = CGRectMake(0, 0,  self.overlayView.frame.size.width,  self.overlayView.frame.size.height);
+    _overLayer.path = path.CGPath;
+    
+    
+    
+    //线的layer（直接用镂空的划线会有外面矩形和里面圆形的2个，所以单独用一个layer画圆形的）
+    _line = [CAShapeLayer layer];
+    _line.frame = _overLayer.frame;
+    _line.fillColor = [UIColor clearColor].CGColor;
+    _line.strokeColor = [UIColor whiteColor].CGColor;
+    _line.lineWidth = 2.0;
+    _line.path = circlePath.CGPath;
+    [_overLayer addSublayer:_line];
+    
+    [self.overlayView.layer addSublayer:_overLayer];
+
 }
 
 @end
