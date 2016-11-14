@@ -585,7 +585,7 @@
     //path用rule
     [path setUsesEvenOddFillRule:YES];
     
-    //镂空layer
+    //镂空layer.
     _overLayer = [CAShapeLayer layer];
     _overLayer.fillColor = [UIColor colorWithWhite:0.25 alpha:0.25].CGColor;
     _overLayer.fillRule = kCAFillRuleEvenOdd;
