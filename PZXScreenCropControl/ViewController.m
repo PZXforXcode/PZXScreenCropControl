@@ -85,8 +85,8 @@
         
         PZXScreenCropController *vc = [[PZXScreenCropController alloc]init];
         vc.originalImage = image;
-        vc.isRound = YES;
-        vc.widthAndHeight = 800/600.f;
+        vc.isRound = YES;//是否截图圆形
+        vc.widthAndHeight = 800/600.f;//宽高比
         vc.delegate = self;
         [vc appearWithAnimation:YES];
 

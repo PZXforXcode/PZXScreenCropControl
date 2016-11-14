@@ -33,30 +33,7 @@
     rect.origin.y = 0;
     rect.size.width *= self.scale;
     rect.size.height *= self.scale;
-    //x,y不能小0
-    if (rect.origin.x < 0) {
-        
-        rect.origin.x = 0;
-        
-    }
-    if (rect.origin.y < 0) {
-        
-        rect.origin.y = 0;
-        
-    }
-    //如果rect的宽高超过了image本身的宽高会接到空白的东西，要给他删去。
-    CGFloat cgWidth = CGImageGetWidth(self.CGImage);
-    CGFloat cgHeight = CGImageGetHeight(self.CGImage);//取到图片的宽高
-    
-    if (CGRectGetMaxX(rect)>cgWidth) {
-        
-        rect.size.width = cgWidth-rect.origin.x;
-    }
-    if (CGRectGetMaxY(rect)>cgHeight) {
-        
-        rect.size.height = cgHeight-rect.origin.y;
-    }
-    
+
     //开位图上下文
     UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
     //创建圆形路径
