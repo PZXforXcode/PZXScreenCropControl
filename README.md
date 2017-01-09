@@ -2,7 +2,7 @@
 <div><div><font color="#3366ff">一款自由截图的控件，系统截图只支持正方形，经过修改可以支持各种矩形，和圆形，各种比例椭圆的截图。</font></div>
 
 ### 使用方法：
-```
+```Objective-C
 PZXScreenCropController *vc = [[PZXScreenCropController alloc]init];
 vc.originalImage = image;
 vc.isRound = YES;//是否截图圆形
